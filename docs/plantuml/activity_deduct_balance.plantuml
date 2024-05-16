@@ -1,0 +1,24 @@
+@startuml
+queue       "SQS Queue\nqueue:deduct balance" as SQS
+participant "Deduct Balance Worker" as svc
+database    Postgres    as pg
+queue       "SNS Topic\nqueue:reject transfer" as SNSReject
+queue       "SNS Topic\nqueue:procceed transfer" as SNSProcceed
+
+SQS -> svc: message received
+
+svc -> pg: check balance
+
+alt failed case: balance insufficient
+
+  svc -> SNSReject: publish message\nwith info: balance insufficient
+
+end
+
+svc -> pg: deduct & update\nbalance
+
+svc -> pg: update transfer\nstatus into "PROCEED"
+
+svc -> SNSProcceed: publish message to be procceed to next stage
+
+@enduml

@@ -1,0 +1,35 @@
+@startuml
+
+(Start) ..> (Create Transfer)
+note right of (Create Transfer) : transfer status : ACCEPTED
+
+rectangle "User Balance" {
+  usecase "Deduct Balance"
+}
+
+
+(Create Transfer) ...> "Deduct Balance"
+
+note "Balance insufficient\ntransfer status : REJECTED" as NBIS
+
+"Deduct Balance" ..> NBIS
+
+NBIS ..> (Reject Transfer)
+
+
+
+note "Balance sufficient\ntransfer status : PROCCEED" as NBS
+
+"Deduct Balance" ..> NBS
+
+NBS ..> (Procceed Transfer)
+
+(Procceed Transfer) ..> (Bank)
+
+note right of (Bank) : if transaction succeeded >> transfer status: SUCCEEDED\nif transaction failed >> transfer status: FAILED
+
+(Bank) ..> (End)
+(Reject Transfer) ..> (End)
+
+
+@enduml

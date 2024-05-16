@@ -1,0 +1,158 @@
+version: '3.7'
+
+services:
+  localstack:
+    image: localstack/localstack:latest
+    environment:
+      - AWS_DEFAULT_REGION=ap-southeast-1
+      - EDGE_PORT=4566
+      - SERVICES=sqs,sns
+    volumes:
+      - './localdevscripts/setup-localstack-sns-sqs.sh:/etc/localstack/init/ready.d/localstack-init.sh'
+    ports:
+      - '4566-4597:4566-4597'
+    networks: [ "brick-transfer" ]
+
+  postgres:
+    image: postgres:latest
+    container_name: postgres
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: brick-transfer
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks: [ "brick-transfer" ]
+
+  rest:
+    container_name: rest
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports: [ 8080:8080 ]
+    volumes:
+      - ./docs:/root/docs
+    environment:
+      APP_ENV: production
+      PG_HOST: postgres
+      PG_PORT: 5432
+      PG_USER: postgres
+      PG_PASSWORD: postgres
+      PG_DATABASE: brick-transfer
+      PG_RO_HOST: postgres
+      PG_RO_PORT: 5432
+      PG_RO_USER: postgres
+      PG_RO_PASSWORD: postgres
+      PG_RO_DATABASE: brick-transfer
+      AWS_ENDPOINT: http://localstack:4566
+      AWS_REGION: ap-southeast-1
+      AWS_ACCESS_KEY_ID: dummy
+      AWS_SECRET_ACCESS_KEY: dummy
+      BANK_HOST_URL: https://fahmy-bank-1.free.beeceptor.com/api/v1
+      AWS_SNS_TOPIC_ARN: arn:aws:sns:ap-southeast-1:000000000000:brick-transfer
+    depends_on:
+      - postgres
+      - localstack
+    networks: [ "brick-transfer" ]
+    command: [ "./brick-transfer", "rest" ]
+
+  deduct-balance-worker:
+    container_name: deduct-balance-worker
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      APP_ENV: production
+      PG_HOST: postgres
+      PG_PORT: 5432
+      PG_USER: postgres
+      PG_PASSWORD: postgres
+      PG_DATABASE: brick-transfer
+      PG_RO_HOST: postgres
+      PG_RO_PORT: 5432
+      PG_RO_USER: postgres
+      PG_RO_PASSWORD: postgres
+      PG_RO_DATABASE: brick-transfer
+      AWS_ENDPOINT: http://localstack:4566
+      AWS_REGION: ap-southeast-1
+      AWS_ACCESS_KEY_ID: dummy
+      AWS_SECRET_ACCESS_KEY: dummy
+      BANK_HOST_URL: https://fahmy-bank-1.free.beeceptor.com/api/v1
+      AWS_SNS_TOPIC_ARN: arn:aws:sns:ap-southeast-1:000000000000:brick-transfer
+      AWS_SQS_DEDUCT_BALANCE: http://localstack:4566/000000000000/transfer-deduct-balance-queue
+    depends_on:
+      - postgres
+      - localstack
+    networks: [ "brick-transfer" ]
+    command: [ "./brick-transfer", "deduct-balance-worker" ]
+
+  proceed-transfer-worker:
+    container_name: proceed-transfer-worker
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      APP_ENV: production
+      PG_HOST: postgres
+      PG_PORT: 5432
+      PG_USER: postgres
+      PG_PASSWORD: postgres
+      PG_DATABASE: brick-transfer
+      PG_RO_HOST: postgres
+      PG_RO_PORT: 5432
+      PG_RO_USER: postgres
+      PG_RO_PASSWORD: postgres
+      PG_RO_DATABASE: brick-transfer
+      AWS_ENDPOINT: http://localstack:4566
+      AWS_REGION: ap-southeast-1
+      AWS_ACCESS_KEY_ID: dummy
+      AWS_SECRET_ACCESS_KEY: dummy
+      BANK_HOST_URL: https://fahmy-bank-1.free.beeceptor.com/api/v1
+      AWS_SNS_TOPIC_ARN: arn:aws:sns:ap-southeast-1:000000000000:brick-transfer
+      AWS_SQS_PROCEED_TRANSFER: http://localstack:4566/000000000000/proceed-transfer-queue
+    depends_on:
+      - postgres
+      - localstack
+    networks: [ "brick-transfer" ]
+    command: [ "./brick-transfer", "proceed-transfer-worker" ]
+
+  reversal-balance-worker:
+    container_name: reversal-balance-worker
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      APP_ENV: production
+      PG_HOST: postgres
+      PG_PORT: 5432
+      PG_USER: postgres
+      PG_PASSWORD: postgres
+      PG_DATABASE: brick-transfer
+      PG_RO_HOST: postgres
+      PG_RO_PORT: 5432
+      PG_RO_USER: postgres
+      PG_RO_PASSWORD: postgres
+      PG_RO_DATABASE: brick-transfer
+      AWS_ENDPOINT: http://localstack:4566
+      AWS_REGION: ap-southeast-1
+      AWS_ACCESS_KEY_ID: dummy
+      AWS_SECRET_ACCESS_KEY: dummy
+      BANK_HOST_URL: https://fahmy-bank-1.free.beeceptor.com/api/v1
+      AWS_SNS_TOPIC_ARN: arn:aws:sns:ap-southeast-1:000000000000:brick-transfer
+      AWS_SQS_REVERSAL_BALANCE: http://localstack:4566/000000000000/transfer-reversal-balance-queue
+    depends_on:
+      - postgres
+      - localstack
+    networks: [ "brick-transfer" ]
+    command: [ "./brick-transfer", "reversal-balance-worker" ]
+
+
+volumes:
+  postgres_data:
+
+networks:
+  brick-transfer:
+    driver: bridge
