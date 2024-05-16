@@ -83,7 +83,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"user_id\": \"u-515ffa15-43af-4773-b0d5-e80a53613a4b\",\n    \"destination_account\": \"124215\",\n    \"bank_code\": \"123456789\",\n    \"amount\": 1000,\n    \"currency\": \"IDR\",\n    \"notes\": \"Move fund\",\n    \"reference_id\": \"ORD123456789-failed\",\n    \"metadata\": {\n        \"recipient\": {\n            \"name\": \"Jane Smith\",\n            \"email\": \"jane.smith@example.com\"\n        }\n    }\n}",
+					"raw": "{\n    \"user_id\": \"u-515ffa15-43af-4773-b0d5-e80a53613a4b\",\n    \"destination_account\": \"124215\",\n    \"bank_code\": \"123456789\",\n    \"amount\": 1000,\n    \"currency\": \"IDR\",\n    \"notes\": \"Move fund\",\n    \"reference_id\": \"ORD123456789-ok2\",\n    \"metadata\": {\n        \"recipient\": {\n            \"name\": \"Jane Smith\",\n            \"email\": \"jane.smith@example.com\"\n        }\n    }\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -111,7 +111,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"user_id\": \"u-515ffa15-43af-4773-b0d5-e80a53613a4b\",\n    \"destination_account\": \"124215\",\n    \"bank_code\": \"11-132-11\",\n    \"amount\": 1000,\n    \"currency\": \"IDR\",\n    \"notes\": \"Move fund\",\n    \"reference_id\": \"ORD123456789-2b\",\n    \"metadata\": {\n        \"recipient\": {\n            \"name\": \"Jane Smith\",\n            \"email\": \"jane.smith@example.com\",\n            \"bank_account\": {\n                \"account_number\": \"9876543210\",\n                \"bank_name\": \"Another Bank\",\n                \"routing_number\": \"123456789\"\n            }\n        }\n    }\n}",
+					"raw": "{\n    \"account_number\": \"124215\",\n    \"bank_code\": \"123456789\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -140,7 +140,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n  \"transfer_id\": \"0e8cbbf9-1ee6-4fd3-8d3e-6fda303b703f\",\n  \"status\": \"FAILED\",\n  \"message\": \"-\",\n  \"amount\": 1000,\n  \"account_number\": \"124215\",\n  \"recipient_name\": \"Jane Smith\"\n}",
+					"raw": "{\n  \"transfer_id\": \"9ae3794f-7675-4ce0-a04e-24668959719e\",\n  \"status\": \"FAILED\",\n  \"message\": \"-\",\n  \"amount\": 1000,\n  \"account_number\": \"124215\",\n  \"recipient_name\": \"Jane Smith\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
