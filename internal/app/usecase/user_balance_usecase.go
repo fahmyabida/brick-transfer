@@ -69,5 +69,5 @@ func (u *UserBalanceUsecaseImpl) ReversalBalance(ctx context.Context, payload *d
 		return err
 	}
 
-	return u.publisher.PublishProceedTransfer(transferData)
+	return nil
 }
