@@ -5,7 +5,7 @@ database    Postgres    as pg
 queue       "SNS Topic" as SNS
 user -> svc: request create transfer
 
-svc -> pg: insert transfer data \nwith status: "ACCEPTED"
+svc -> pg: insert transfer data \nwith status: ACCEPTED
 
 alt successful case
 

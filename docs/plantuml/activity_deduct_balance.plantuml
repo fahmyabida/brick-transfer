@@ -2,23 +2,26 @@
 queue       "SQS Queue\nqueue:deduct balance" as SQS
 participant "Deduct Balance Worker" as svc
 database    Postgres    as pg
-queue       "SNS Topic\nqueue:reject transfer" as SNSReject
-queue       "SNS Topic\nqueue:procceed transfer" as SNSProcceed
+queue       "SNS Topic" as SNS
 
 SQS -> svc: message received
 
 svc -> pg: check balance
 
-alt failed case: balance insufficient
+alt balance sufficient
+  
+  svc -> pg: deduct & update\nbalance
 
-  svc -> SNSReject: publish message\nwith info: balance insufficient
+  svc -> pg: update transfer status into DEDUCTED
+
+  svc -> SNS: publish message\nto proceed transfer
+
+else balance insufficient
+
+  svc -> pg: update transfer status into REJECTED
 
 end
 
-svc -> pg: deduct & update\nbalance
-
-svc -> pg: update transfer\nstatus into "PROCEED"
-
-svc -> SNSProcceed: publish message to be procceed to next stage
+svc -> SQS: acknowledge message
 
 @enduml
